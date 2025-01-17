@@ -10,8 +10,8 @@ export const imageSearchTool = tool(
       const customSearch = google.customsearch("v1");
       const response = await customSearch.cse.list({
         q: query,
-        auth: process.env.GOOGLE_API_KEY,
-        cx: process.env.GOOGLE_CSE_ID,
+        auth: c.env.GOOGLE_API_KEY,
+        cx: c.env.GOOGLE_CSE_ID,
         searchType: "image"
       });
 

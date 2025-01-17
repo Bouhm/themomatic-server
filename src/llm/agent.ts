@@ -4,11 +4,9 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { createToolCallingAgent } from "langchain/agents";
 import { AgentExecutor } from "langchain/agents";
 import { outputSchema } from './schemas';
+import { GetOpenAIChat } from './llm';
 
-const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
-  apiKey: process.env.OPENAI_API_KEY
-});
+const llm: ChatOpenAI = GetOpenAIChat();
 
 const tools = [
   imageSearchTool
@@ -41,6 +39,8 @@ const agentExecutor = new AgentExecutor({
 export async function generateThemeConfig(query: string) {
   const res = await agentExecutor.invoke({ input: query });
 
+  // Use smaller llm to handle formatting output
+  const formatterLlm = GetOpenAIChat("gpt-3.5-turbo");
   const messages = [
     {
       role: "system",
@@ -53,6 +53,6 @@ export async function generateThemeConfig(query: string) {
     }
   ];
 
-  const llmWithStructuredOutput = llm.withStructuredOutput(outputSchema);
+  const llmWithStructuredOutput = formatterLlm.withStructuredOutput(outputSchema);
   return llmWithStructuredOutput.invoke(messages)
 }
