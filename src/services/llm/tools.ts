@@ -3,15 +3,21 @@ import { google } from "googleapis";
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 
+const googleSearch = google.customsearch("v1");
+
+export function setupTools(env: CloudflareBindings) {
+  googleSearch.context._options = {
+    auth: env.GOOGLE_API_KEY
+  };
+}
+
 export const imageSearchTool = tool(
   async (query): Promise<string> => {
     try {
       // Initialize the client for custom search
-      const customSearch = google.customsearch("v1");
-      const response = await customSearch.cse.list({
+      const response = await googleSearch.cse.list({
         q: query,
-        auth: c.env.GOOGLE_API_KEY,
-        cx: c.env.GOOGLE_CSE_ID,
+        cx: "f4fe6b5f5907f43b1",
         searchType: "image"
       });
 

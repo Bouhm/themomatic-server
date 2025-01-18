@@ -1,25 +1,76 @@
 import { Hono } from 'hono'
-import { RateLimiterDO } from './middleware/rateLimiter'
+import { ChatService } from './services/ChatService'
 
-type Bindings = {
-  OPENAI_API_KEY: string
-  GOOGLE_API_KEY: string
-  GOOGLE_CSE_ID: string
-  RATE_LIMITER_DO: DurableObjectNamespace
+const app = new Hono<{ Bindings: CloudflareBindings }>()
+
+// Type for how we'll store global usage in KV
+interface GlobalUsage {
+  count: number      // total requests for the day
+  resetTime: number  // timestamp (ms) for next reset
 }
 
-const app = new Hono<{ Bindings: Bindings }>()
+const GLOBAL_KEY = 'GLOBAL_USAGE'
 
-app.post('/generateThemeConfig', async (c, next) => {
-  const id = c.env.RATE_LIMITER_DO.idFromName('GLOBAL-QUEUE')
-  const obj = c.env.RATE_LIMITER_DO.get(id)
+// Hard-coded limits
+const GLOBAL_DAILY_LIMIT = 50
 
-  // Forward the request to DO’s "/enqueue" route
-  return obj.fetch('https://dummy/enqueue', {
-    method: 'POST',
-    headers: c.req.headers,
-    body: c.req.body,
-  })
+function getNextMidnight(): number {
+  const d = new Date()
+  d.setHours(24, 0, 0, 0) // set to next midnight local time
+  return d.getTime()
+}
+
+app.post('/generateTheme', async (c) => {
+  console.log("Request received")
+  const kv = c.env.THEMOMATIC_KV
+
+  // 1) Identify the user. In real life, you might use cookies or IP-based tracking.
+  //    Here, we read "x-user-id" header for simplicity.
+  // const userId = c.req.header('x-user-id')
+  // if (!userId) {
+  //   return c.json({ error: 'Missing x-user-id header' }, 400)
+  // }
+
+  // 2) Fetch global usage from KV
+  const globalUsageStr = await kv.get(GLOBAL_KEY)
+  let globalUsage: GlobalUsage
+  if (globalUsageStr) {
+    globalUsage = JSON.parse(globalUsageStr)
+  } else {
+    // Not set yet
+    globalUsage = { count: 0, resetTime: getNextMidnight() }
+  }
+
+  // Check if we passed reset time
+  if (Date.now() > globalUsage.resetTime) {
+    // Reset for new day
+    globalUsage = { count: 0, resetTime: getNextMidnight() }
+  }
+
+  // If global usage >= 50, return 429 immediately
+  if (globalUsage.count >= GLOBAL_DAILY_LIMIT) {
+    return c.json({ error: 'Global daily limit (50) reached' }, 429)
+  }
+
+  // => If we pass all checks, increment usage
+  globalUsage.count++
+
+  // Write updated usage to KV (in parallel)
+  await Promise.all([
+    kv.put(GLOBAL_KEY, JSON.stringify(globalUsage))
+  ])
+
+  const body = await c.req.json<{ query: string }>()
+
+  console.log("Received query: " + body.query)
+
+  const query = body.query;
+  const chatService = new ChatService(c.env);
+  const result = await chatService.CallChatGpt(query);
+
+  console.log(result)
+
+  return c.json({ success: true, data: result })
 })
 
-app.fire()
+export default app

@@ -2,12 +2,14 @@
   "name": "themomatic-server",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify"
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
     "@cloudflare/vitest-pool-workers": "^0.6.3",
     "@langchain/core": "^0.3.30",
     "@langchain/openai": "^0.3.17",
+    "googleapis": "^144.0.0",
     "hono": "^4.6.16",
     "langchain": "^0.3.11"
   },

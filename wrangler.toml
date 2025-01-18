@@ -1,8 +1,34 @@
 name = "themomatic-server"
-main = "dist/worker.js"
-compatibility_date = "2023-10-15"
+main = "src/index.ts"
+compatibility_date = "2025-01-18"
+workers_dev = true
+compatibility_flags = [ "nodejs_compat" ]
 
-[durable_objects]
-bindings = [
-  { name = "RATE_LIMITER_DO", class_name = "RateLimiterDO" }
+# [vars]
+# MY_VAR = "my-variable"
+
+# [[kv_namespaces]]
+kv_namespaces = [
+    { binding = "THEMOMATIC_KV", preview_id = "de896370901f4ec4b16f8d5479e1044d", id = "de896370901f4ec4b16f8d5479e1044d" }
+]
+
+# [[r2_buckets]]
+# binding = "MY_BUCKET"
+# bucket_name = "my-bucket"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = ""
+
+# [ai]
+# binding = "AI"
+
+[observability.logs]
+enabled = true
+# head_sampling_rate = 1
+
+[env.production]
+kv_namespaces = [
+    { binding = "THEMOMATIC_KV", id = "de896370901f4ec4b16f8d5479e1044d" }
 ]
