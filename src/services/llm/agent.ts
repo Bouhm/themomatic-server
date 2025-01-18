@@ -15,14 +15,10 @@ export async function generateThemeConfig(chatService: ChatService, query: strin
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "system",
-      "You are a web design expert. You will get a relevant image URL for a given theme or concept to be used as the website background. Only use the tools you have been provided with."
+      "You are a web design and front-end expert. You will create a website theme based on the given concept. Provide 6 color codes: site background color, container background color, heading text color, other text color, primary action button color, secondary action button color. Also provide inline React CSS styles for the site background (optional background image), the container, buttons, and input fields. Each of the CSS will be applied to the respective React components in the style prop directly as JSON. Also provide a CSS font appropriate for the theme. Be creative with stylizing elements appropriate for the theme. Make sure any text colors have enough contrast against their respective backgrounds. You may use provided tools to search for a background image url if you think it'll benefit the website to include one."
     ],
     ["human", "{input}"],
-    ["placeholder", "{agent_scratchpad}"],
-    [
-      "system",
-      "You are a front-end CSS expert. Provide 6 color codes: site background color, container background color, heading text color, other text color, primary action button color, secondary action button color. Also provide css style for the site background (optional background image), css style for the container, css style for buttons, and css style for input fields. Be creative with stylizing elements appropriate for the theme. Also provide a font appropriate for the theme. Make sure any text colors have enough contrast against their resspective backgrounds."
-    ]
+    ["placeholder", "{agent_scratchpad}"]
   ]);
 
   const agent = createToolCallingAgent({
