@@ -1,16 +1,16 @@
-import { OpenAI, OpenAIChatCallOptions } from "@langchain/openai";
+import { ChatOpenAI, OpenAIChatCallOptions } from "@langchain/openai";
 import { generateThemeConfig } from "./llm/agent"
 import { setupTools } from "./llm/tools";
 
 export class ChatService {
-  public ChatGpt: OpenAI<OpenAIChatCallOptions>;
+  public ChatGpt: ChatOpenAI<OpenAIChatCallOptions>;
 
   constructor(env: CloudflareBindings) {
-    this.ChatGpt = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+    this.ChatGpt = new ChatOpenAI({ apiKey: env.OPENAI_API_KEY, model: "gpt-4o-mini" });
     setupTools(env);
   }
 
-  public GetOpenAIChat(model = "gpt-4o-mini", temperature = 0): OpenAI<OpenAIChatCallOptions> {
+  public GetOpenAIChat(model = "gpt-4o-mini", temperature = 0): ChatOpenAI<OpenAIChatCallOptions> {
     this.ChatGpt.model = model;
     this.ChatGpt.temperature = temperature;
 
