@@ -21,17 +21,14 @@ function getNextMidnight(): number {
 }
 
 app.post('/generateTheme', async (c) => {
-  console.log("Request received")
+  const authHeader = c.req.header('Authorization');
+
+  if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader !== `Bearer ${c.env.CLIENT_KEY}`) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
   const kv = c.env.THEMOMATIC_KV
-
-  // 1) Identify the user. In real life, you might use cookies or IP-based tracking.
-  //    Here, we read "x-user-id" header for simplicity.
-  // const userId = c.req.header('x-user-id')
-  // if (!userId) {
-  //   return c.json({ error: 'Missing x-user-id header' }, 400)
-  // }
-
-  // 2) Fetch global usage from KV
+  // Fetch global usage from KV
   const globalUsageStr = await kv.get(GLOBAL_KEY)
   let globalUsage: GlobalUsage
   if (globalUsageStr) {
@@ -61,7 +58,6 @@ app.post('/generateTheme', async (c) => {
   ])
 
   const body = await c.req.json<{ query: string }>()
-
   console.log("Received query: " + body.query)
 
   const query = body.query;

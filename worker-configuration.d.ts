@@ -5,4 +5,5 @@ interface CloudflareBindings {
 	GOOGLE_API_KEY: string;
 	GOOGLE_CSE_ID: string;
 	THEMOMATIC_KV: KVNamespace;
+	CLIENT_KEY: string;
 }
