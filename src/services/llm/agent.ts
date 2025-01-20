@@ -41,7 +41,7 @@ export async function generateThemeConfig(chatService: ChatService, query: strin
     {
       role: "system",
       content:
-        "You are a helpful assistant. You will parse the input into the specified JSON format.",
+        "You are a helpful assistant. You will parse the input into the specified JSON format. You will also convert any CSS strings into React style objects, ex. background-color: --> backgroundColor:",
     },
     {
       role: "user",
