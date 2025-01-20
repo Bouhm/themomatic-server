@@ -11,10 +11,10 @@ const paletteSchema = z.object({
 
 const customStylesSchema = z.object({
   "font": z.string().describe("The font family to use for the theme"),
-  "backgroundStyle": z.record(z.string(), z.string()).describe("The css style to apply to the website background including any images"),
-  "containerStyle": z.record(z.string(), z.string()).describe("The css style to apply to the container element"),
-  "buttonStyle": z.record(z.string(), z.string()).describe("The css style to apply to the buttons"),
-  "inputStyle": z.record(z.string(), z.string()).describe("The css style to apply to the input fields")
+  "backgroundStyle": z.string().describe("The css style to apply to the website background including any images"),
+  "containerStyle": z.string().describe("The css style to apply to the container element"),
+  "buttonStyle": z.string().describe("The css style to apply to the buttons"),
+  "inputStyle": z.string().describe("The css style to apply to the input fields")
 })
 
 export const outputSchema = z.object({

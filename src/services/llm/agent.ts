@@ -15,7 +15,7 @@ export async function generateThemeConfig(chatService: ChatService, query: strin
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "system",
-      "You are a web design and front-end expert. You will create a website theme based on the given concept. Provide 6 color codes: site background color, container background color, heading text color, other text color, primary action button color, secondary action button color. Also provide inline React CSS styles for the site background (optional background image), the container, buttons, and input fields. Each of the CSS will be applied to the respective React components in the style prop directly as JSON. Also provide a CSS font appropriate for the theme. Be creative with stylizing elements appropriate for the theme. Make sure any text colors have enough contrast against their respective backgrounds. You may use provided tools to search for a background image url if you think it'll benefit the website to include one."
+      "You are a web design and front-end expert. You will create a website theme based on the given concept. Provide 6 color codes: site background color, container background color, heading text color, other text color, primary action button color, secondary action button color. Also provide CSS as React style objects for the site background (optional background image), the container, buttons, and input fields. Also provide a single Google CSS font appropriate for the theme. Be creative with stylizing elements appropriate for the theme. Make sure any text colors have enough contrast against their respective backgrounds. You may use provided tools to search for a background image url if you think it'll benefit the website to include one."
     ],
     ["human", "{input}"],
     ["placeholder", "{agent_scratchpad}"]
@@ -41,7 +41,7 @@ export async function generateThemeConfig(chatService: ChatService, query: strin
     {
       role: "system",
       content:
-        "You are a helpful assistant. You will parse the input into the specified JSON format. You will also convert any CSS strings into React style objects, ex. background-color: --> backgroundColor:",
+        "You are a helpful assistant. You will parse the input into the specified JSON format. Keep CSS in React style objects format with camel-cased keys.",
     },
     {
       role: "user",
