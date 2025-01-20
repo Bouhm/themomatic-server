@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { ChatService } from './services/ChatService'
+import { cors } from 'hono/cors'
 
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 
@@ -19,6 +20,18 @@ function getNextMidnight(): number {
   d.setHours(24, 0, 0, 0) // set to next midnight local time
   return d.getTime()
 }
+
+// Set CORS to allow a specific domain only
+app.use(
+  '*',
+  cors({
+    origin: 'https://themomatic.vercel.app/',  // Replace with your allowed domain
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 600,  // Optional: Caching preflight response for 10 minutes
+    credentials: true  // Allow credentials (cookies, authorization headers)
+  })
+)
 
 app.post('/generateTheme', async (c) => {
   const authHeader = c.req.header('Authorization');
