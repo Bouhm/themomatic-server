@@ -22,16 +22,18 @@ function getNextMidnight(): number {
 }
 
 // Set CORS to allow a specific domain only
-app.use(
-  '*',
-  cors({
-    origin: 'https://themomatic.vercel.app/',  // Replace with your allowed domain
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowHeaders: ['Content-Type', 'Authorization'],
-    maxAge: 600,  // Optional: Caching preflight response for 10 minutes
-    credentials: true  // Allow credentials (cookies, authorization headers)
-  })
-)
+app.use('*', async (c, next) => {
+  c.res.headers.set('Access-Control-Allow-Origin', 'https://themomatic.vercel.app');
+  c.res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  c.res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  c.res.headers.set('Access-Control-Allow-Credentials', 'true');
+
+  if (c.req.method === 'OPTIONS') {
+    return new Response(null, { status: 204 });  // Respond to preflight requests
+  }
+
+  await next();
+});
 
 app.post('/generateTheme', async (c) => {
   const authHeader = c.req.header('Authorization');
