@@ -10,7 +10,7 @@ export class ChatService {
     setupTools(env);
   }
 
-  public GetOpenAIChat(model = "gpt-4o-mini", temperature = 0.5): ChatOpenAI<OpenAIChatCallOptions> {
+  public GetOpenAIChat(model = "gpt-4o-mini", temperature = 0.1): ChatOpenAI<OpenAIChatCallOptions> {
     this.ChatGpt.model = model;
     this.ChatGpt.temperature = temperature;
 
