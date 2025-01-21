@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { ChatService } from './services/ChatService'
 import { cors } from 'hono/cors'
+import { z } from "zod";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 
@@ -25,10 +26,10 @@ function getNextMidnight(): number {
 app.use(
   '*',
   cors({
-    origin: 'http://localhost:3000',  // Replace with your frontend URL
+    origin: 'https://themomatic.vercel.app',
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
-    credentials: true  // If using cookies/authentication
+    credentials: true
   })
 )
 
@@ -78,9 +79,10 @@ app.post('/generateTheme', async (c) => {
   const chatService = new ChatService(c.env);
   const result = await chatService.CallChatGpt(query);
 
-  console.log(result)
+  const schema = z.record(z.string(), z.string());
+  const parsedData = result;
 
-  return c.json({ success: true, data: result })
+  return c.json({ success: true, data: parsedData })
 })
 
 export default app
