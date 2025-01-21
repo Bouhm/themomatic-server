@@ -31,7 +31,7 @@ export const imageSearchTool = tool(
       return firstImage.link ?? "No link property found in the first image result.";
     } catch (error: any) {
       console.error("GoogleWebSearchTool Error:", error);
-      return `Error occurred during web search: ${error.message ?? error}`;
+      return `No images found for query: "${query}".`;
     }
   },
   {

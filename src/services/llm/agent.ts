@@ -15,10 +15,14 @@ export async function generateThemeConfig(chatService: ChatService, query: strin
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "system",
-      "You are a web design and front-end expert. You will create a website theme based on the given concept. The website has background for the page, a container div with some content, heading text, a primary and secondary button, and an input field. Provide 6 color codes: site background color, container background color, heading text color, other text color, primary action button color, secondary action button color. Provide CSS as React style objects for the following: Background, Container, Primary Button, Secondary Button, Input. Use double quotes instead of single quotes and do not use CSS pseudo-classes like :hover or :focus. Your CSS should be bloated; flex your CSS skills and absolutely blow people away with your CSS skill and design ability. Make sure every element at least has a background color and text color but do not set any position, size, margins, text alignment, or z-index. Be creative with unique borders, color combinations, text effects, shadows, gradients, and other visual effects; plain is bad! Also provide a Google font name appropriate for the theme for the primary (header) text and secondary one for all other text and include only the names, omit serif/sans-serif. Make sure any text colors have enough contrast against their respective backgrounds. You may use provided tools to search for a background image appropriate as a website background."
+      "You are a web design expert. You will retrieve a image for a website background that fits the given concept using the provided tools."
     ],
     ["human", "{input}"],
-    ["placeholder", "{agent_scratchpad}"]
+    ["placeholder", "{agent_scratchpad}"],
+    [
+      "system",
+      "You are a web design and front-end expert. You will create a website theme based on the given concept. The website has background for the page, a container div with some content, heading text, a primary and secondary button, and an input field. Provide 6 color codes: site background color, container background color, heading text color, other text color, primary action button color, secondary action button color. Provide CSS for the following: Background, Container, Primary Button, Secondary Button, Input. Use camel-case keys like React style objects instead of hyphens, use double quotes instead of single quotes to ensure they are valid JSON of the style only (no keys for which the styles are for, only the style including the starting and ending in curly brackets), and do not use CSS pseudo-classes like :hover or :focus. Your CSS should be bloated; flex your CSS skills and blow people away with your CSS skill and design ability. Make sure every element at least has a background color and text color but do not set any position, size, padding, margin, text alignment, or z-index. Be creative with unique borders, color combinations, text effects, shadows, gradients, and other visual effects! Also provide a Google font name appropriate for the theme for the primary (header) text and secondary one for all other text (only the font names, not the full font family notation). Make sure any text colors have enough contrast against their respective backgrounds."
+    ],
   ]);
 
   const agent = createToolCallingAgent({
@@ -36,12 +40,12 @@ export async function generateThemeConfig(chatService: ChatService, query: strin
   console.log(res.output)
 
   // Use smaller llm to handle formatting output
-  const formatterLlm = chatService.GetOpenAIChat("gpt-4o-mini");
+  const formatterLlm = chatService.GetOpenAIChat("gpt-3.5-turbo");
   const messages = [
     {
       role: "system",
       content:
-        "You are a helpful assistant. You will parse the input into the specified JSON format. CSS properties should be in React style format with camel-cased keys wrapped in double quotes as valid JSON. Trim unecessary spaces and newlines and do not include the keys for which the styles are for, only the style including the starting and ending in curly brackets.",
+        "You are a helpful assistant. You will parse the input into the specified JSON format. Styles should be valid stringified JSON. Trim unecessary spaces and newlines.",
     },
     {
       role: "user",

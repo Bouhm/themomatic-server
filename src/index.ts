@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { ChatService } from './services/ChatService'
 import { cors } from 'hono/cors'
-import { z } from "zod";
+import { fixJsonString } from './utils'
 
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 
@@ -79,10 +79,14 @@ app.post('/generateTheme', async (c) => {
   const chatService = new ChatService(c.env);
   const result = await chatService.CallChatGpt(query);
 
-  const schema = z.record(z.string(), z.string());
-  const parsedData = result;
+  // Try to fix bad outputs
+  // Object.entries(result.customStyles).forEach(entry => {
+  //   if (!entry[0].includes("Font")) {
+  //     entry[1] = fixJsonString(entry[1])
+  //   }
+  // })
 
-  return c.json({ success: true, data: parsedData })
+  return c.json({ success: true, data: result })
 })
 
 export default app
