@@ -35,7 +35,6 @@ app.use(
 
 
 app.post('/generateTheme', async (c) => {
-  console.log("Request received")
   const authHeader = c.req.header('Authorization');
 
   if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader !== `Bearer ${c.env.CLIENT_KEY}`) {
