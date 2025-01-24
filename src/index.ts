@@ -26,7 +26,7 @@ function getNextMidnight(): number {
 app.use(
   '*',
   cors({
-    origin: 'http://localhost:3000',
+    origin: 'https://themomatic.vercel.app',
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
     credentials: true
