@@ -37,7 +37,6 @@ export async function generateThemeConfig(chatService: ChatService, query: strin
   });
 
   const res = await agentExecutor.invoke({ input: query })
-  console.log(res.output)
 
   // Use smaller llm to handle formatting output
   const formatterLlm = chatService.GetOpenAIChat("gpt-3.5-turbo");
